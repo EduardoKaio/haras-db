@@ -1,39 +1,26 @@
--- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- -----------------------------------------------------
--- Schema haras_db
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema haras_db
--- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `haras_db` DEFAULT CHARACTER SET utf8 ;
 USE `haras_db` ;
 
--- -----------------------------------------------------
--- Table `haras_db`.`Pessoa`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Pessoa` (
-  `id_pessoa` INT NOT NULL,
+  `id_pessoa` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NOT NULL,
   `data_nascimento` DATE NOT NULL,
   `cpf` VARCHAR(11) NOT NULL,
   `is_gerente` TINYINT NOT NULL,
   `email` VARCHAR(100) NOT NULL,
   `senha` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id_pessoa`))
+  PRIMARY KEY (`id_pessoa`),
+  UNIQUE INDEX `uq_pessoa_cpf` (`cpf` ASC),
+  UNIQUE INDEX `uq_pessoa_email` (`email` ASC))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Equino`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Equino` (
-  `id_equino` INT NOT NULL,
+  `id_equino` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(45) NOT NULL,
   `raca` VARCHAR(45) NOT NULL,
   `peso` DOUBLE NOT NULL,
@@ -44,19 +31,15 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Equino` (
   `registro_pai` VARCHAR(25) NULL,
   `registro_mae` VARCHAR(25) NULL,
   `pelagem` VARCHAR(25) NOT NULL,
-  PRIMARY KEY (`id_equino`))
+  PRIMARY KEY (`id_equino`),
+  UNIQUE INDEX `uq_equino_registro` (`registro` ASC))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`MedicoVeterinario`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`MedicoVeterinario` (
   `id_pessoa` INT NOT NULL,
-  `num_mcrmv` VARCHAR(5) NOT NULL,
+  `num_crmv` VARCHAR(5) NOT NULL,
   `uf_crmv` VARCHAR(2) NOT NULL,
-  UNIQUE INDEX `num_mcrmv_UNIQUE` (`num_mcrmv` ASC) VISIBLE,
-  UNIQUE INDEX `uf_crmv_UNIQUE` (`uf_crmv` ASC) VISIBLE,
+  UNIQUE INDEX `uq_medico_crmv` (`num_crmv` ASC, `uf_crmv` ASC),
   PRIMARY KEY (`id_pessoa`),
   CONSTRAINT `fk_MedicoVeterinario_Pessoa1`
     FOREIGN KEY (`id_pessoa`)
@@ -65,12 +48,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`MedicoVeterinario` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Atendimento`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Atendimento` (
-  `id_atendimento` INT NOT NULL,
+  `id_atendimento` INT NOT NULL AUTO_INCREMENT,
   `valor` DOUBLE NOT NULL,
   `data_hora` DATETIME NOT NULL,
   `diagnostico` TINYTEXT NOT NULL,
@@ -92,10 +71,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Atendimento` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Colaborador`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Colaborador` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -106,12 +81,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Colaborador` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Contrato`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Contrato` (
-  `id_contrato` INT NOT NULL,
+  `id_contrato` INT NOT NULL AUTO_INCREMENT,
   `data_fim` DATE NULL,
   `data_inicio` DATE NOT NULL,
   `salario` DOUBLE NOT NULL,
@@ -125,20 +96,12 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Contrato` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Limpeza`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Limpeza` (
-  `id_limpeza` INT NOT NULL COMMENT '						',
+  `id_limpeza` INT NOT NULL AUTO_INCREMENT,
   `data_hora` DATETIME NOT NULL,
   PRIMARY KEY (`id_limpeza`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Proprietario`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Proprietario` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -149,12 +112,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Proprietario` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Competicao`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Competicao` (
-  `id_competicao` INT NOT NULL,
+  `id_competicao` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(100) NOT NULL,
   `data_inicio` DATE NOT NULL,
   `cidade` VARCHAR(45) NOT NULL,
@@ -163,20 +122,12 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Competicao` (
   PRIMARY KEY (`id_competicao`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Categoria`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Categoria` (
-  `id_categoria` INT NOT NULL,
+  `id_categoria` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(25) NOT NULL,
   PRIMARY KEY (`id_categoria`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Competidor_Treinador`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Competidor_Treinador` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -187,10 +138,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Competidor_Treinador` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Competidor`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Competidor` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -201,12 +148,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Competidor` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Senha`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Senha` (
-  `id_senha` INT NOT NULL,
+  `id_senha` INT NOT NULL AUTO_INCREMENT,
   `valor` DOUBLE NOT NULL,
   `numero` INT NOT NULL,
   `id_pessoa` INT NOT NULL,
@@ -240,12 +183,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Senha` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Resultado`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Resultado` (
-  `id_resultado` INT NOT NULL,
+  `id_resultado` INT NOT NULL AUTO_INCREMENT,
   `valor_premiacao` DOUBLE NOT NULL,
   `colocacao` INT NULL,
   `id_senha` INT NOT NULL,
@@ -258,10 +197,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Resultado` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Tratamento`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Tratamento` (
   `tratamento` TINYTEXT NOT NULL,
   `id_atendimento` INT NOT NULL,
@@ -273,12 +208,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Tratamento` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`ItemEstoque`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`ItemEstoque` (
-  `id_item_estoque` INT NOT NULL,
+  `id_item_estoque` INT NOT NULL AUTO_INCREMENT,
   `unidade_medida` VARCHAR(2) NOT NULL,
   `data_validade` DATE NOT NULL,
   `nome` VARCHAR(100) NOT NULL,
@@ -286,12 +217,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`ItemEstoque` (
   PRIMARY KEY (`id_item_estoque`))
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Movimentacao`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Movimentacao` (
-  `id_movimentacao` INT NOT NULL,
+  `id_movimentacao` INT NOT NULL AUTO_INCREMENT,
   `valor_unitario` DOUBLE NOT NULL,
   `quantidade_movimentada` DOUBLE NOT NULL,
   `data_hora` DATETIME NOT NULL,
@@ -307,10 +234,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Movimentacao` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Telefone`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Telefone` (
   `telefone` VARCHAR(11) NOT NULL,
   `id_pessoa` INT NOT NULL,
@@ -322,10 +245,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Telefone` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Treinador`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Treinador` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -336,12 +255,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Treinador` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Treino`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Treino` (
-  `id_treino` INT NOT NULL,
+  `id_treino` INT NOT NULL AUTO_INCREMENT,
   `status` VARCHAR(45) NOT NULL,
   `observacoes` VARCHAR(45) NULL,
   `data_hora_fim` DATETIME NULL,
@@ -364,10 +279,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Treino` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Limpeza_has_Equino`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Limpeza_has_Equino` (
   `id_limpeza` INT NOT NULL,
   `id_equino` INT NOT NULL,
@@ -386,10 +297,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Limpeza_has_Equino` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Medicamento`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Medicamento` (
   `id_item_estoque` INT NOT NULL,
   INDEX `fk_Alimento_ItemEstoque1_idx` (`id_item_estoque` ASC) VISIBLE,
@@ -401,10 +308,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Medicamento` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Atendimento_has_Medicamento`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Atendimento_has_Medicamento` (
   `id_atendimento` INT NOT NULL,
   `id_item_estoque` INT NOT NULL,
@@ -424,10 +327,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Atendimento_has_Medicamento` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Tratador`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Tratador` (
   `id_pessoa` INT NOT NULL,
   PRIMARY KEY (`id_pessoa`),
@@ -439,10 +338,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Tratador` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Tratador_has_Limpeza`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Tratador_has_Limpeza` (
   `id_pessoa` INT NOT NULL,
   `id_limpeza` INT NOT NULL,
@@ -461,10 +356,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Tratador_has_Limpeza` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Proprietario_has_Equino`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Proprietario_has_Equino` (
   `id_pessoa` INT NOT NULL,
   `id_equino` INT NOT NULL,
@@ -483,10 +374,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Proprietario_has_Equino` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Alimento`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Alimento` (
   `id_item_estoque` INT NOT NULL,
   INDEX `fk_Alimento_ItemEstoque1_idx` (`id_item_estoque` ASC) VISIBLE,
@@ -498,12 +385,8 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Alimento` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
--- -----------------------------------------------------
--- Table `haras_db`.`Alimentacao`
--- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `haras_db`.`Alimentacao` (
-  `id_alimentacao` INT NOT NULL,
+  `id_alimentacao` INT NOT NULL AUTO_INCREMENT,
   `quantidade` DOUBLE NOT NULL,
   `data_hora` DATETIME NOT NULL,
   `id_equino` INT NOT NULL,
@@ -522,7 +405,6 @@ CREATE TABLE IF NOT EXISTS `haras_db`.`Alimentacao` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

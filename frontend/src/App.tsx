@@ -1,29 +1,47 @@
-import { useEffect, useState } from "react";
-import { fetchPing, type PingResponse } from "./api/ping";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { AppLayout } from "./layouts/AppLayout";
+import { PessoasListPage } from "./pages/PessoasListPage";
+import { PessoaFormPage } from "./pages/PessoaFormPage";
+import { MedicosVeterinariosListPage } from "./pages/MedicosVeterinariosListPage";
+import { MedicoVeterinarioFormPage } from "./pages/MedicoVeterinarioFormPage";
+import { ColaboradoresListPage } from "./pages/ColaboradoresListPage";
+import { ColaboradorFormPage } from "./pages/ColaboradorFormPage";
+import { ContratosListPage } from "./pages/ContratosListPage";
+import { ContratoFormPage } from "./pages/ContratoFormPage";
+import { EquinosListPage } from "./pages/EquinosListPage";
+import { EquinoFormPage } from "./pages/EquinoFormPage";
+import { ProprietariosListPage } from "./pages/ProprietariosListPage";
+import { ProprietarioFormPage } from "./pages/ProprietarioFormPage";
 
 function App() {
-  const [data, setData] = useState<PingResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchPing()
-      .then(setData)
-      .catch((err) => setError(err.message));
-  }, []);
-
   return (
-    <div style={{ fontFamily: "sans-serif", padding: "2rem" }}>
-      <h1>Haras — Status da Integração</h1>
-      {error && <p style={{ color: "red" }}>Erro: {error}</p>}
-      {!error && !data && <p>Carregando...</p>}
-      {data && (
-        <ul>
-          <li>Status: {data.status}</li>
-          <li>Hora do banco: {data.dbTime}</li>
-          <li>Total de pessoas cadastradas: {data.pessoaCount}</li>
-        </ul>
-      )}
-    </div>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Navigate to="/pessoas" replace />} />
+        <Route path="/pessoas" element={<PessoasListPage />} />
+        <Route path="/pessoas/novo" element={<PessoaFormPage />} />
+        <Route path="/pessoas/:id/editar" element={<PessoaFormPage />} />
+
+        <Route path="/medicos-veterinarios" element={<MedicosVeterinariosListPage />} />
+        <Route path="/medicos-veterinarios/novo" element={<MedicoVeterinarioFormPage />} />
+        <Route path="/medicos-veterinarios/:idPessoa/editar" element={<MedicoVeterinarioFormPage />} />
+
+        <Route path="/colaboradores" element={<ColaboradoresListPage />} />
+        <Route path="/colaboradores/novo" element={<ColaboradorFormPage />} />
+
+        <Route path="/contratos" element={<ContratosListPage />} />
+        <Route path="/contratos/novo" element={<ContratoFormPage />} />
+        <Route path="/contratos/:id/editar" element={<ContratoFormPage />} />
+
+        <Route path="/equinos" element={<EquinosListPage />} />
+        <Route path="/equinos/novo" element={<EquinoFormPage />} />
+        <Route path="/equinos/:id/editar" element={<EquinoFormPage />} />
+
+        <Route path="/proprietarios" element={<ProprietariosListPage />} />
+        <Route path="/proprietarios/novo" element={<ProprietarioFormPage />} />
+        <Route path="/proprietarios/:idPessoa" element={<ProprietarioFormPage />} />
+      </Route>
+    </Routes>
   );
 }
 
