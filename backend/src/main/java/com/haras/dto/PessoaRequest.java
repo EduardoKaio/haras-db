@@ -34,6 +34,6 @@ public record PessoaRequest(
         @Size(max = 100, message = "Email deve ter no máximo 100 caracteres")
         String email,
 
-        @Size(max = 45, message = "Senha deve ter no máximo 45 caracteres")
+        @Size(max = 72, message = "Senha deve ter no máximo 72 caracteres")
         String senha
 ) {}

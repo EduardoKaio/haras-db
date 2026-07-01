@@ -1,5 +1,20 @@
 const BASE_URL = "http://localhost:8080/api";
 
+const TOKEN_KEY = "haras.token";
+
+// Token mantido em memória (inicializado do localStorage para sobreviver a refresh).
+let authToken: string | null = localStorage.getItem(TOKEN_KEY);
+// Callback chamado quando a API responde 401 fora do fluxo de login (token expirado/inválido).
+let unauthorizedHandler: (() => void) | null = null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
 export class ApiError extends Error {
   status: number;
   fieldErrors?: Record<string, string>;
@@ -12,10 +27,15 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options?.headers as Record<string, string> | undefined),
+  };
+  if (authToken) {
+    headers.Authorization = `Bearer ${authToken}`;
+  }
+
+  const response = await fetch(`${BASE_URL}${path}`, { ...options, headers });
 
   if (response.status === 204) {
     return undefined as T;
@@ -24,6 +44,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const body = await response.json().catch(() => undefined);
 
   if (!response.ok) {
+    // 401 em rota autenticada => sessão perdida: dispara o handler (logout + redirect).
+    // O próprio login (/auth/*) trata seu 401 exibindo "Credenciais inválidas".
+    if (response.status === 401 && !path.startsWith("/auth/")) {
+      unauthorizedHandler?.();
+    }
     if (response.status === 400 && body && typeof body === "object") {
       throw new ApiError(400, "Dados inválidos", body as Record<string, string>);
     }

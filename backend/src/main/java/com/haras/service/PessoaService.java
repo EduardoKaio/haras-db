@@ -10,6 +10,7 @@ import com.haras.model.Pessoa;
 import com.haras.model.Telefone;
 import com.haras.repository.PessoaRepository;
 import com.haras.repository.TelefoneRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +21,13 @@ public class PessoaService {
 
     private final PessoaRepository pessoaRepository;
     private final TelefoneRepository telefoneRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public PessoaService(PessoaRepository pessoaRepository, TelefoneRepository telefoneRepository) {
+    public PessoaService(PessoaRepository pessoaRepository, TelefoneRepository telefoneRepository,
+                         PasswordEncoder passwordEncoder) {
         this.pessoaRepository = pessoaRepository;
         this.telefoneRepository = telefoneRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<PessoaResponse> listar() {
@@ -38,7 +42,7 @@ public class PessoaService {
         validarSenha(request.senha(), true);
         validarUnicidade(request, null);
         Pessoa pessoa = new Pessoa(null, request.nome(), request.dataNascimento(), request.cpf(),
-                request.gerente(), request.email(), request.senha());
+                request.gerente(), request.email(), passwordEncoder.encode(request.senha()));
         int id = pessoaRepository.insert(pessoa);
         return toResponse(buscarOuFalhar(id));
     }
@@ -47,7 +51,9 @@ public class PessoaService {
         Pessoa atual = buscarOuFalhar(id);
         validarSenha(request.senha(), false);
         validarUnicidade(request, id);
-        String senha = (request.senha() == null || request.senha().isBlank()) ? atual.senha() : request.senha();
+        String senha = (request.senha() == null || request.senha().isBlank())
+                ? atual.senha()
+                : passwordEncoder.encode(request.senha());
         Pessoa pessoa = new Pessoa(id, request.nome(), request.dataNascimento(), request.cpf(),
                 request.gerente(), request.email(), senha);
         pessoaRepository.update(id, pessoa);
@@ -88,8 +94,8 @@ public class PessoaService {
             }
             return;
         }
-        if (senha.length() < 4) {
-            throw new ValidationException(Map.of("senha", "Senha deve ter entre 4 e 45 caracteres"));
+        if (senha.length() < 8 || senha.length() > 72) {
+            throw new ValidationException(Map.of("senha", "Senha deve ter entre 8 e 72 caracteres"));
         }
     }
 

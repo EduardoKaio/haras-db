@@ -1,6 +1,15 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 export function AppLayout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -25,6 +34,12 @@ export function AppLayout() {
             Proprietários
           </NavLink>
         </nav>
+        <div className="app-header__user">
+          {user && <span className="app-header__email">{user.email}</span>}
+          <button type="button" className="app-header__logout" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
       </header>
       <main className="app-main">
         <Outlet />

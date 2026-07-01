@@ -44,6 +44,11 @@ public class PessoaRepository {
                 .stream().findFirst();
     }
 
+    public Optional<Pessoa> findByEmail(String email) {
+        return jdbcTemplate.query("SELECT * FROM Pessoa WHERE email = ?", PessoaRepository::mapRow, email)
+                .stream().findFirst();
+    }
+
     public boolean existsByCpf(String cpf) {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM Pessoa WHERE cpf = ?", Integer.class, cpf);
         return count != null && count > 0;

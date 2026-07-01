@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./layouts/AppLayout";
+import { RequireAuth } from "./auth/AuthContext";
+import { LoginPage } from "./pages/LoginPage";
 import { PessoasListPage } from "./pages/PessoasListPage";
 import { PessoaFormPage } from "./pages/PessoaFormPage";
 import { MedicosVeterinariosListPage } from "./pages/MedicosVeterinariosListPage";
@@ -16,7 +18,15 @@ import { ProprietarioFormPage } from "./pages/ProprietarioFormPage";
 function App() {
   return (
     <Routes>
-      <Route element={<AppLayout />}>
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route
+        element={
+          <RequireAuth>
+            <AppLayout />
+          </RequireAuth>
+        }
+      >
         <Route path="/" element={<Navigate to="/pessoas" replace />} />
         <Route path="/pessoas" element={<PessoasListPage />} />
         <Route path="/pessoas/novo" element={<PessoaFormPage />} />
