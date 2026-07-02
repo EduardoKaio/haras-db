@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/pessoas/**").hasRole("GERENTE")
                         .requestMatchers(HttpMethod.PUT, "/api/pessoas/**").hasRole("GERENTE")
                         .requestMatchers(HttpMethod.DELETE, "/api/pessoas/**").hasRole("GERENTE")
+                        // Registrar limpeza é exclusivo do gerente
+                        .requestMatchers(HttpMethod.POST, "/api/limpezas/**").hasRole("GERENTE")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((req, res, e) -> escreverErro(res, 401, "Não autenticado"))

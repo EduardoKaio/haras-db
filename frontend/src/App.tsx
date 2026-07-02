@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppLayout } from "./layouts/AppLayout";
-import { RequireAuth } from "./auth/AuthContext";
+import { RequireAuth, RequireRole } from "./auth/AuthContext";
 import { LoginPage } from "./pages/LoginPage";
 import { PessoasListPage } from "./pages/PessoasListPage";
 import { PessoaFormPage } from "./pages/PessoaFormPage";
@@ -14,6 +14,10 @@ import { EquinosListPage } from "./pages/EquinosListPage";
 import { EquinoFormPage } from "./pages/EquinoFormPage";
 import { ProprietariosListPage } from "./pages/ProprietariosListPage";
 import { ProprietarioFormPage } from "./pages/ProprietarioFormPage";
+import { TratadoresListPage } from "./pages/TratadoresListPage";
+import { TratadorFormPage } from "./pages/TratadorFormPage";
+import { LimpezasListPage } from "./pages/LimpezasListPage";
+import { LimpezaFormPage } from "./pages/LimpezaFormPage";
 
 function App() {
   return (
@@ -50,6 +54,19 @@ function App() {
         <Route path="/proprietarios" element={<ProprietariosListPage />} />
         <Route path="/proprietarios/novo" element={<ProprietarioFormPage />} />
         <Route path="/proprietarios/:idPessoa" element={<ProprietarioFormPage />} />
+
+        <Route path="/tratadores" element={<TratadoresListPage />} />
+        <Route path="/tratadores/novo" element={<TratadorFormPage />} />
+
+        <Route path="/limpezas" element={<LimpezasListPage />} />
+        <Route
+          path="/limpezas/nova"
+          element={
+            <RequireRole role="GERENTE" redirect="/limpezas">
+              <LimpezaFormPage />
+            </RequireRole>
+          }
+        />
       </Route>
     </Routes>
   );

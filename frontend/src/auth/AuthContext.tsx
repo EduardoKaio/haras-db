@@ -83,3 +83,20 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }
   return <>{children}</>;
 }
+
+/** Bloqueia a rota se o usuário não tiver o papel exigido, redirecionando para `redirect`. */
+export function RequireRole({
+  role,
+  children,
+  redirect = "/",
+}: {
+  role: string;
+  children: ReactNode;
+  redirect?: string;
+}) {
+  const { hasRole } = useAuth();
+  if (!hasRole(role)) {
+    return <Navigate to={redirect} replace />;
+  }
+  return <>{children}</>;
+}
