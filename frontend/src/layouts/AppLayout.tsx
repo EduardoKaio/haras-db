@@ -33,6 +33,12 @@ export function AppLayout() {
           <NavLink to="/proprietarios" className={({ isActive }) => (isActive ? "active" : "")}>
             Proprietários
           </NavLink>
+          <NavLink to="/tratadores" className={({ isActive }) => (isActive ? "active" : "")}>
+            Tratadores
+          </NavLink>
+          <NavLink to="/limpezas" className={({ isActive }) => (isActive ? "active" : "")}>
+            Limpezas
+          </NavLink>
         </nav>
         <div className="app-header__user">
           {user && <span className="app-header__email">{user.email}</span>}
